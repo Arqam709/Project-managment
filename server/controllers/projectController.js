@@ -8,9 +8,18 @@ export const createProject = async ( req,res) => {
 
     const {userId} = await req.auth(); // aunthnticated user id from clerk
 
-    const {workspaceId , description , name , status , start_date , end_data,
-        team_members,team_lead,progress,priority} = req.body;
-  
+    const {
+  workspaceId,
+  description,
+  name,
+  status,
+  start_date,
+  end_date,
+  team_members,
+  team_lead,
+  progress,
+  priority,
+} = req.body;
 
     //check if user has admin role for workspace
 
@@ -56,12 +65,12 @@ export const createProject = async ( req,res) => {
 
     if(team_members?.length > 0) {
         const membersToAdd = []
-        workspace.member.forEach(member => {
+        workspace.members.forEach(member => {
             if(team_members.includes(member.user.email)){
                 membersToAdd.push(member.user.id)
             }
         })
-   
+
 
     await prisma.projectMember.createMany({
         data : membersToAdd.map(memberId => ({
@@ -104,8 +113,19 @@ export const updateProject = async ( req,res) => {
 
     try {
         const {userId} = await req.auth();
-        const {id,workspaceId , description , name , status , start_date , end_data,
-        team_members,team_lead,progress,priority} = req.body;
+        const {
+  id,
+  workspaceId,
+  description,
+  name,
+  status,
+  start_date,
+  end_date,
+  team_members,
+  team_lead,
+  progress,
+  priority,
+} = req.body;
 
         //check if user has admin role for workspace
         const workspace = await prisma.workspace.findUnique({
@@ -183,14 +203,15 @@ export const addMember = async ( req,res) => {
         }
 
 
-        if(!project.team_lead !== userId){
-            return res.status(404).json({message : "only project lead can add members"});
-
-        }
+        if (project.team_lead !== userId) {
+    return res.status(403).json({ message: "Only project lead can add members" });
+}
 
         //check if user is already a member
 
-        const existingMember = project.members.find((member)=>member.email === email)
+        const existingMember = project.members.find(
+    (member) => member.user.email === email
+);
 
 
         if(existingMember) {
