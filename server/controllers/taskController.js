@@ -31,20 +31,21 @@ export const createTask = async(req,res) => {
         }
 
         const task = await prisma.task.create({
-            data : {
-                projectId,
-                title,
-                description,
-                priority,
-                assigneeId,
-                status,
-                due_date : new Date(due_date)
-            }
+            data: {
+    projectId,
+    title,
+    description,
+    type,
+    priority,
+    assigneeId: assigneeId || null,
+    status,
+    due_date: due_date ? new Date(due_date) : null
+}
         })
 
         const taskWithAssignee = await prisma.task.findUnique({
             where : {id : task.id},
-            include : {assignee : ture},
+            include : {assignee : true},
 
         })
 
@@ -92,7 +93,7 @@ export const updateTask = async(req,res) => {
             return res.status(404).json({message : "Project not found"})
         }
         else if(project.team_lead !== userId){
-            return res.status(404).json({message : "You do not have admin privileges for this project"})
+            return res.status(403).json({message : "You do not have admin privileges for this project"})
         }
         
         const updatedtask = await prisma.task.update({
