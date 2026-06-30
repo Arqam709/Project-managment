@@ -13,8 +13,8 @@ export default function CreateTaskDialog({ showCreateTask, setShowCreateTask, pr
     const dispatch = useDispatch()
     
     const currentWorkspace = useSelector((state) => state.workspace?.currentWorkspace || null);
-    const project = currentWorkspace?.projects.find((p) => p.id === projectId);
-    const teamMembers = project?.members || [];
+    const project = currentWorkspace?.projects?.find((p) => p.id === projectId);
+const teamMembers = currentWorkspace?.members || [];
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
