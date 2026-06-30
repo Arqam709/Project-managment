@@ -101,11 +101,21 @@ const teamMembers = currentWorkspace?.members || [];
                             <label className="text-sm font-medium">Assignee</label>
                             <select value={formData.assigneeId} onChange={(e) => setFormData({ ...formData, assigneeId: e.target.value })} className="w-full rounded dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 px-3 py-2 text-zinc-900 dark:text-zinc-200 text-sm mt-1" >
                                 <option value="">Unassigned</option>
-                                {teamMembers.map((member) => (
-                                    <option key={member?.user.id} value={member?.user.id}>
-                                        {member?.user.email}
-                                    </option>
-                                ))}
+                                {teamMembers.map((member) => {
+    const memberUser = member?.user || member;
+
+    const id = memberUser?.id || memberUser?._id;
+    const email = memberUser?.email;
+    const name = memberUser?.name;
+
+    if (!id) return null;
+
+    return (
+        <option key={id} value={id}>
+            {email || name}
+        </option>
+    );
+})}
                             </select>
                         </div>
 
